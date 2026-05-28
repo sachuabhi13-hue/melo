@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MeloChat - Modern Premium Stranger Chat</title>
+  <!-- Google Fonts: Outfit and Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Leaflet Map API CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Background Glow Effects -->
+  <div class="bg-glow bg-glow-purple"></div>
+  <div class="bg-glow bg-glow-blue"></div>
+
+  <!-- Main Responsive Shell -->
+  <div class="app-container">
+    
+    <!-- Top Global Header (Hidden in some screens if needed) -->
+    <header class="app-header" id="global-header">
+      <div class="brand">
+        <div class="logo-icon">
+          <span>M</span>
+        </div>
+        <h1>MeloChat</h1>
+      </div>
+      <div class="header-actions">
+        <button id="admin-toggle-btn" class="icon-btn tooltip" title="Admin Dashboard">
+          <i data-lucide="shield-alert"></i>
+        </button>
+        <button id="header-settings-btn" class="icon-btn">
+          <i data-lucide="settings"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Screens Viewport -->
+    <main class="app-viewport">
+
+      <!-- ==============================================
+           SCREEN 1: AUTHENTICATION / SIGNUP / PROFILE SETUP
+           ============================================== -->
+      <section id="screen-auth" class="app-screen active">
+        <div class="auth-card glass-card">
+          <div class="auth-header">
+            <h2>Welcome to <span class="text-gradient">MeloChat</span></h2>
+            <p>Setup your account to start matching with strangers</p>
+          </div>
+
+          <form id="auth-form">
+            <!-- Mode Toggle (Login vs Register) -->
+            <div class="auth-modes">
+              <button type="button" class="auth-mode-tab active" data-mode="signup">Create Account</button>
+              <button type="button" class="auth-mode-tab" data-mode="login">Login</button>
+            </div>
+
+            <!-- Profile Photo Selector -->
+            <div class="avatar-setup-container signup-only-field">
+              <label>Select Profile Photo</label>
+              <div class="avatar-grid-wrapper">
+                <div class="avatar-selected-preview">
+                  <img id="selected-avatar-img" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" alt="Avatar">
+                  <div class="edit-badge">
+                    <i data-lucide="camera"></i>
+                  </div>
+                </div>
+                <div class="avatar-presets">
+                  <p>Choose an avatar or upload custom photo:</p>
+                  <div class="presets-row" style="margin-bottom: 12px;">
+                    <img class="avatar-preset-img active" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" alt="Preset 1">
+                    <img class="avatar-preset-img" src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150" alt="Preset 2">
+                    <img class="avatar-preset-img" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150" alt="Preset 3">
+                    <img class="avatar-preset-img" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150" alt="Preset 4">
+                  </div>
+                  <label class="glass-btn fill-width" style="padding: 8px 12px; font-size: 12px; cursor: pointer;">
+                    <input type="file" id="auth-avatar-file" accept="image/*" class="hidden-input">
+                    <i data-lucide="upload-cloud" style="width: 14px; height: 14px; margin-right: 6px;"></i>
+                    <span>Upload Custom Photo</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Credentials -->
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="auth-username">Username</label>
+                <div class="input-icon-wrapper">
+                  <i data-lucide="at-sign"></i>
+                  <input type="text" id="auth-username" required placeholder="melo_stranger">
+                </div>
+              </div>
+              <div class="form-group signup-only-field">
+                <label for="auth-name">Full Name</label>
+                <div class="input-icon-wrapper">
+                  <i data-lucide="user"></i>
+                  <input type="text" id="auth-name" placeholder="Melo User">
+                </div>
+              </div>
+              <div class="form-group signup-only-field">
+                <label for="auth-gender">My Gender</label>
+                <select id="auth-gender">
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="form-group signup-only-field">
+                <label for="auth-age">Age</label>
+                <input type="number" id="auth-age" min="18" max="100" value="21">
+              </div>
+            </div>
+
+            <!-- Biography -->
+            <div class="form-group signup-only-field">
+              <label for="auth-bio">Bio</label>
+              <textarea id="auth-bio" rows="2" placeholder="Tell strangers something interesting about you..."></textarea>
+            </div>
+
+            <!-- Preferences & Country Nesting -->
+            <div class="form-grid signup-only-field" style="grid-template-columns: 1fr 1fr;">
+              <div class="form-group">
+                <label for="auth-interested-in">Interested In</label>
+                <select id="auth-interested-in">
+                  <option value="Women">Women</option>
+                  <option value="Men">Men</option>
+                  <option value="Everyone">Everyone</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="auth-country">Country</label>
+                <select id="auth-country">
+                  <!-- Loaded dynamically -->
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="auth-state">State / Region</label>
+                <select id="auth-state">
+                  <!-- Loaded dynamically -->
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="auth-district">District / City</label>
+                <select id="auth-district">
+                  <!-- Loaded dynamically -->
+                </select>
+              </div>
+            </div>
+
+            <!-- Submit buttons -->
+            <button type="submit" id="auth-submit-btn" class="gradient-btn fill-width glow-btn">
+              <span>Create Account & Continue</span>
+            </button>
+          </form>
+
+          <!-- Alternative Auth Methods -->
+          <div class="auth-divider">
+            <span>OR</span>
+          </div>
+
+          <div class="auth-alternatives">
+            <button type="button" id="google-auth-btn" class="glass-btn fill-width">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google Logo" class="google-icon">
+              <span>Continue with Google</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ==============================================
+           SCREEN 2: START CHAT SCREEN (MATCH CONFIGURATION)
+           ============================================== -->
+      <section id="screen-start-chat" class="app-screen">
+        <div class="start-chat-wrapper">
+          <!-- Page title block -->
+          <div class="section-title-block">
+            <h2>Start a chat</h2>
+            <p>Choose your preferences to match with the right people.</p>
+          </div>
+
+          <!-- Option 1: Interested In selector -->
+          <div class="pref-card glass-card">
+            <h3>I'm interested in</h3>
+            <div class="interest-selector">
+              <button class="interest-option" data-value="Women">
+                <i data-lucide="venus"></i>
+                <span>Women</span>
+              </button>
+              <button class="interest-option active" data-value="Men">
+                <i data-lucide="mars"></i>
+                <span>Men</span>
+              </button>
+              <button class="interest-option" data-value="Everyone">
+                <i data-lucide="users"></i>
+                <span>Everyone</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Option 2: My Neighbourhood location card -->
+          <div class="pref-card glass-card location-clickable-card" id="location-picker-trigger">
+            <div class="location-card-content">
+              <i data-lucide="map-pin" class="location-pin-icon text-gradient"></i>
+              <div class="location-text">
+                <label>My neighbourhood</label>
+                <span id="display-location-label">Kochi, Kerala, India</span>
+              </div>
+            </div>
+            <i data-lucide="chevron-right" class="arrow-right-icon"></i>
+          </div>
+
+          <!-- Option 3: Choose a chat type cards grid -->
+          <div class="pref-card glass-card">
+            <h3>Choose a chat type</h3>
+            <div class="chat-type-grid">
+              <!-- Free categories -->
+              <div class="chat-type-card active" data-category="Normal Chat">
+                <div class="chat-type-title">Normal chat</div>
+                <div class="chat-type-desc">Chill conversation</div>
+              </div>
+              <div class="chat-type-card" data-category="Friendly Chat">
+                <div class="chat-type-title">Friendly chat</div>
+                <div class="chat-type-desc">Make new friends</div>
+              </div>
+              <div class="chat-type-card" data-category="Fun Chat">
+                <div class="chat-type-title">Fun chat</div>
+                <div class="chat-type-desc">Have fun</div>
+              </div>
+              <div class="chat-type-card" data-category="Deep Talk">
+                <div class="chat-type-title">Deep talk</div>
+                <div class="chat-type-desc">Meaningful talks</div>
+              </div>
+              <div class="chat-type-card" data-category="Need Advice">
+                <div class="chat-type-title">Need advice</div>
+                <div class="chat-type-desc">Ask anything</div>
+              </div>
+
+              <!-- Premium categories -->
+              <div class="chat-type-card premium-card" data-category="Romantic">
+                <div class="premium-lock-tag"><i data-lucide="lock"></i></div>
+                <div class="chat-type-title">Romantic <span class="premium-badge-label">₹499</span></div>
+                <div class="chat-type-desc">Find romance</div>
+              </div>
+              <div class="chat-type-card premium-card" data-category="Flirty / Horny">
+                <div class="premium-lock-tag"><i data-lucide="lock"></i></div>
+                <div class="chat-type-title">Horny / Flirty <span class="premium-badge-label">₹499</span></div>
+                <div class="chat-type-desc">18+ only</div>
+              </div>
+              <div class="chat-type-card premium-card" data-category="Red Flag">
+                <div class="premium-lock-tag"><i data-lucide="lock"></i></div>
+                <div class="chat-type-title">Red flag <span class="premium-badge-label">₹499</span></div>
+                <div class="chat-type-desc">Share & warn</div>
+              </div>
+              <div class="chat-type-card premium-card" data-category="Lesbian">
+                <div class="premium-lock-tag"><i data-lucide="lock"></i></div>
+                <div class="chat-type-title">Lesbian <span class="premium-badge-label">₹499</span></div>
+                <div class="chat-type-desc">For lesbian chat</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Start Chat Action Button -->
+          <button id="start-chat-btn" class="gradient-btn fill-width glow-btn large-btn">
+            <i data-lucide="zap"></i>
+            <span>Start Chat</span>
+          </button>
+          
+          <div class="online-indicator-row">
+            <span class="pulse-dot"></span>
+            <span id="active-user-count">1000+ people online</span>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ==============================================
+           SCREEN 3: MATCHING QUEUE / RADAR SCREEN
+           ============================================== -->
+      <section id="screen-matching" class="app-screen">
+        <div class="matching-container">
+          <div class="radar-shell">
+            <div class="radar-glow"></div>
+            <div class="radar-line"></div>
+            <!-- Profile icons in orbit -->
+            <div class="radar-orbit orbit-1"></div>
+            <div class="radar-orbit orbit-2"></div>
+            <div class="radar-orbit orbit-3"></div>
+            <div class="radar-avatar center-avatar">
+              <img id="radar-user-photo" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" alt="Self">
+            </div>
+            <!-- Dynamic scanning matches popping up -->
+            <div class="scanning-node node-1"><img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150" alt="match"></div>
+            <div class="scanning-node node-2"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150" alt="match"></div>
+            <div class="scanning-node node-3"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150" alt="match"></div>
+          </div>
+
+          <div class="matching-text-block">
+            <h2 class="text-gradient animate-pulse">Finding a Stranger...</h2>
+            <p>Matching by your preferences</p>
+            <div class="matching-preference-tags">
+              <span id="tag-pref-gender" class="pref-tag"><i data-lucide="venus-mars"></i> Women</span>
+              <span id="tag-pref-category" class="pref-tag"><i data-lucide="heart"></i> Romantic Chat</span>
+              <span id="tag-pref-location" class="pref-tag"><i data-lucide="map-pin"></i> Kochi</span>
+            </div>
+          </div>
+
+          <button id="cancel-matching-btn" class="glass-btn font-medium">Cancel Match</button>
+        </div>
+      </section>
+
+
+      <!-- ==============================================
+           SCREEN 4: STRANGER CHAT INTERFACE
+           ============================================== -->
+      <section id="screen-stranger-chat" class="app-screen">
+        <div class="chat-interface-wrapper">
+          <!-- Chat Header -->
+          <div class="chat-room-header">
+            <div class="header-left">
+              <button id="chat-back-to-home" class="icon-btn">
+                <i data-lucide="chevron-left"></i>
+              </button>
+              <div class="stranger-profile-info">
+                <div class="avatar-wrapper">
+                  <img id="chat-stranger-avatar" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150" alt="Aisha">
+                  <span class="online-badge"></span>
+                </div>
+                <div class="name-status">
+                  <div class="name-row">
+                    <span id="chat-stranger-name">Aisha</span>
+                    <span id="chat-stranger-verified" class="verified-badge"><i data-lucide="check-circle-2"></i></span>
+                    <span id="chat-stranger-premium" class="premium-badge"><i data-lucide="crown"></i></span>
+                  </div>
+                  <span id="chat-stranger-status" class="status-sub">Online</span>
+                </div>
+              </div>
+            </div>
+            <div class="header-right">
+              <button id="chat-report-btn" class="icon-btn warning-hover tooltip" title="Report User">
+                <i data-lucide="shield-alert"></i>
+              </button>
+              <button id="chat-menu-btn" class="icon-btn">
+                <i data-lucide="more-vertical"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Chat Category Info Banner -->
+          <div class="category-banner-stripe">
+            <span id="chat-active-category-label">💖 You are in Romantic chat</span>
+          </div>
+
+          <!-- Chat Messages Area -->
+          <div class="chat-feed-viewport" id="stranger-chat-feed">
+            <!-- Messages populated dynamically -->
+          </div>
+
+          <!-- Typing Indicator -->
+          <div class="typing-indicator-row hidden" id="stranger-typing-row">
+            <div class="typing-bubble">
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+              <span id="stranger-typing-text">Aisha is typing...</span>
+            </div>
+          </div>
+
+          <!-- Input Bar & Floating Actions -->
+          <div class="chat-footer-wrapper">
+            
+            <!-- Message Input Form -->
+            <form id="chat-send-form" class="chat-input-row">
+              <div class="input-actions-left">
+                <button type="button" id="emoji-picker-btn" class="input-action-btn">
+                  <i data-lucide="smile"></i>
+                </button>
+              </div>
+              
+              <div class="input-text-area">
+                <input type="text" id="chat-message-input" autocomplete="off" placeholder="Type a message...">
+              </div>
+              
+              <div class="input-actions-right">
+                <button type="button" id="attachment-drawer-btn" class="input-action-btn">
+                  <i data-lucide="paperclip"></i>
+                </button>
+                <button type="button" id="voice-recorder-btn" class="input-action-btn">
+                  <i data-lucide="mic"></i>
+                </button>
+              </div>
+
+              <button type="submit" id="chat-send-btn" class="send-message-btn gradient-glow">
+                <i data-lucide="send"></i>
+              </button>
+            </form>
+
+            <!-- Bottom Floating Action Bar -->
+            <div class="chat-action-floating-row">
+              <button id="action-exit-chat" class="floating-action-btn danger-btn-hover">
+                <div class="btn-icon"><i data-lucide="log-out"></i></div>
+                <span>Exit</span>
+              </button>
+              <button id="action-next-chat" class="floating-action-btn primary-btn-hover">
+                <div class="btn-icon"><i data-lucide="chevrons-right"></i></div>
+                <span>Next</span>
+              </button>
+              <button id="action-save-chat" class="floating-action-btn success-btn-hover">
+                <div class="btn-icon"><i data-lucide="bookmark"></i></div>
+                <span>Save Chat</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ==============================================
+           SCREEN 5: MESSAGES (WHATSAPP-STYLE LIST VIEW)
+           ============================================== -->
+      <section id="screen-messages-list" class="app-screen">
+        <div class="messages-list-wrapper">
+          <div class="messages-header">
+            <h2>Messages</h2>
+          </div>
+
+          <!-- Tabs: All, Saved Chats, Friends -->
+          <div class="messages-tabs-row">
+            <button class="msg-tab" data-tab="all">All</button>
+            <button class="msg-tab active" data-tab="saved">Saved Chats</button>
+            <button class="msg-tab" data-tab="friends">Friends</button>
+          </div>
+
+          <!-- Search Bar -->
+          <div class="search-messages-bar">
+            <i data-lucide="search"></i>
+            <input type="text" id="search-threads-input" placeholder="Search saved chats">
+          </div>
+
+          <!-- Threads List Container -->
+          <div class="threads-list-viewport" id="messages-threads-container">
+            <!-- Saved threads will be populated dynamically -->
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ==============================================
+           SCREEN 6: PROFILE & PRIVACY SETTINGS SCREEN
+           ============================================== -->
+      <section id="screen-profile" class="app-screen">
+        <div class="profile-settings-wrapper">
+          <div class="profile-header-strip">
+            <h2>Profile</h2>
+          </div>
+
+          <!-- Profile Photo & Edit ID -->
+          <div class="profile-card-top glass-card">
+            <div class="profile-avatar-container">
+              <img id="profile-display-img" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" alt="Profile avatar">
+              <button id="profile-change-avatar-btn" class="profile-camera-edit">
+                <i data-lucide="camera"></i>
+              </button>
+            </div>
+            <div class="profile-details-text">
+              <div class="profile-name-edit">
+                <h3 id="profile-display-name">MeloUser</h3>
+                <button id="profile-edit-name-btn" class="icon-btn-inline">
+                  <i data-lucide="edit-3"></i>
+                </button>
+              </div>
+              <span id="profile-display-id" class="user-unique-id">ID: MC458712</span>
+            </div>
+          </div>
+
+          <!-- Privacy Settings Switched Container -->
+          <div class="settings-group-card glass-card">
+            <h4>Privacy in stranger chat</h4>
+            <div class="privacy-switches-list">
+              <div class="switch-item-row">
+                <div class="switch-text">
+                  <span class="switch-title">Show name in stranger chat</span>
+                  <span class="switch-subtitle">Others will see your name</span>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="privacy-show-name" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="switch-item-row">
+                <div class="switch-text">
+                  <span class="switch-title">Show profile photo in stranger chat</span>
+                  <span class="switch-subtitle">Others will see your profile</span>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="privacy-show-photo" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="switch-item-row">
+                <div class="switch-text">
+                  <span class="switch-title">Show age in stranger chat</span>
+                  <span class="switch-subtitle">Others will see your age</span>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="privacy-show-age">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="switch-item-row">
+                <div class="switch-text">
+                  <span class="switch-title">Show location in stranger chat</span>
+                  <span class="switch-subtitle">Others will see your location</span>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="privacy-show-location" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="switch-item-row">
+                <div class="switch-text">
+                  <span class="switch-title">Show bio in stranger chat</span>
+                  <span class="switch-subtitle">Others will see your biography</span>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="privacy-show-bio" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- General List Options -->
+          <div class="settings-group-card glass-card">
+            <div class="option-navigate-row" id="edit-interests-btn">
+              <span class="option-text">My Interests</span>
+              <div class="option-right">
+                <span class="option-badge" id="interests-count-badge">5</span>
+                <i data-lucide="chevron-right"></i>
+              </div>
+            </div>
+            <div class="option-navigate-row" id="blocked-users-btn">
+              <span class="option-text">Blocked Users</span>
+              <div class="option-right">
+                <span class="option-badge bg-danger" id="blocked-count-badge">0</span>
+                <i data-lucide="chevron-right"></i>
+              </div>
+            </div>
+            <div class="option-navigate-row" id="notifications-settings-btn">
+              <span class="option-text">Notifications</span>
+              <div class="option-right">
+                <i data-lucide="chevron-right"></i>
+              </div>
+            </div>
+            <div class="option-navigate-row" id="privacy-safety-settings-btn">
+              <span class="option-text">Privacy & Safety</span>
+              <div class="option-right">
+                <i data-lucide="chevron-right"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Logout Button -->
+          <button id="profile-logout-btn" class="glass-btn fill-width danger-text">
+            <i data-lucide="log-out"></i>
+            <span>Log Out</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ==============================================
+           SCREEN 7: ADMIN DASHBOARD PANEL
+           ============================================== -->
+      <section id="screen-admin" class="app-screen">
+        <div class="admin-dashboard-wrapper">
+          <div class="admin-header">
+            <div class="header-left">
+              <button id="admin-back-btn" class="icon-btn">
+                <i data-lucide="chevron-left"></i>
+              </button>
+              <h2>Admin Dashboard</h2>
+            </div>
+            <div class="header-right">
+              <span class="sys-badge"><i data-lucide="shield-check"></i> System Administrator</span>
+            </div>
+          </div>
+
+          <!-- Statistics Grid -->
+          <div class="admin-stats-grid">
+            <div class="stat-box glass-card">
+              <span class="stat-label">Live Users Online</span>
+              <span class="stat-value text-gradient" id="admin-stat-users">1,402</span>
+              <span class="stat-sub">+18% vs last hour</span>
+            </div>
+            <div class="stat-box glass-card">
+              <span class="stat-label">Active Matches</span>
+              <span class="stat-value" id="admin-stat-matches">384</span>
+              <span class="stat-sub">Live conversations</span>
+            </div>
+            <div class="stat-box glass-card">
+              <span class="stat-label">Monthly Revenue</span>
+              <span class="stat-value text-success" id="admin-stat-revenue">₹1,91,616</span>
+              <span class="stat-sub">384 active premium users</span>
+            </div>
+            <div class="stat-box glass-card">
+              <span class="stat-label">Banned Users</span>
+              <span class="stat-value text-danger" id="admin-stat-banned">18</span>
+              <span class="stat-sub">Spammers / Fraud accounts</span>
+            </div>
+          </div>
+
+          <!-- Live Chat Spy and User moderation columns -->
+          <div class="admin-cols-row">
+            <!-- User Reports Table -->
+            <div class="admin-col glass-card">
+              <h3>Recent User Reports</h3>
+              <div class="admin-list-container" id="admin-reports-list">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+
+            <!-- Spy Live Chats Feed -->
+            <div class="admin-col glass-card">
+              <h3>Live Conversation Monitor</h3>
+              <p class="admin-subtext">Click any live match to intercept/spy on the message stream.</p>
+              <div class="live-match-spy-list" id="admin-spy-match-list">
+                <!-- Live matches populated dynamically -->
+              </div>
+              
+              <!-- Spy Chat Viewport -->
+              <div class="spy-chat-panel hidden" id="admin-spy-chat-panel">
+                <div class="spy-chat-header">
+                  <div class="spy-names">Spying: <span id="spy-p1">User A</span> & <span id="spy-p2">User B</span></div>
+                  <button id="close-spy-btn" class="icon-btn-inline"><i data-lucide="x"></i></button>
+                </div>
+                <div class="spy-chat-messages" id="admin-spy-messages">
+                  <!-- Spied chat messages display -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Moderation Control Panel -->
+          <div class="admin-moderation-card glass-card">
+            <h3>Quick User Search & Ban</h3>
+            <div class="search-ban-row">
+              <input type="text" id="admin-ban-username-input" placeholder="Enter username (e.g. melo_stranger)">
+              <button id="admin-quick-ban-btn" class="danger-btn glow-btn">Ban User</button>
+              <button id="admin-quick-unban-btn" class="glass-btn">Unban User</button>
+            </div>
+            <div class="moderated-users-row">
+              <h4>Active Bans:</h4>
+              <div class="banned-tags-flex" id="banned-users-tags-container">
+                <!-- Banned tags -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Navigation Bar (Shown on Home/Chats/Messages/Profile) -->
+    <nav class="app-navbar" id="global-navbar">
+      <button class="nav-item" data-screen="screen-start-chat">
+        <i data-lucide="home"></i>
+        <span>Home</span>
+      </button>
+      <button class="nav-item" data-screen="screen-messages-list">
+        <i data-lucide="messages-square"></i>
+        <span>Chats</span>
+      </button>
+      <button class="nav-item" data-screen="screen-profile">
+        <i data-lucide="user"></i>
+        <span>Profile</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- ==============================================
+       DRAWER 1: CHAT ACTIONS DRAWER MENU
+       ============================================== -->
+  <div class="drawer-overlay" id="chat-actions-drawer">
+    <div class="drawer-panel glass-card">
+      <div class="drawer-header">
+        <h3>Chat actions</h3>
+        <button class="close-drawer-btn" id="close-actions-drawer"><i data-lucide="x"></i></button>
+      </div>
+      <div class="drawer-menu-list">
+        <div class="drawer-menu-item" id="drawer-action-exit">
+          <div class="drawer-item-icon danger-icon"><i data-lucide="log-out"></i></div>
+          <div class="drawer-item-details">
+            <span class="drawer-item-title">Exit</span>
+            <span class="drawer-item-subtitle">End this chat and return to home</span>
+          </div>
+        </div>
+        <div class="drawer-menu-item" id="drawer-action-next">
+          <div class="drawer-item-icon primary-icon"><i data-lucide="chevrons-right"></i></div>
+          <div class="drawer-item-details">
+            <span class="drawer-item-title">Next</span>
+            <span class="drawer-item-subtitle">Find new people</span>
+          </div>
+        </div>
+        <div class="drawer-menu-item" id="drawer-action-save">
+          <div class="drawer-item-icon success-icon"><i data-lucide="bookmark"></i></div>
+          <div class="drawer-item-details">
+            <span class="drawer-item-title">Save chat</span>
+            <span class="drawer-item-subtitle">Save this chat to messages</span>
+          </div>
+        </div>
+        <div class="drawer-menu-item" id="drawer-action-report">
+          <div class="drawer-item-icon warning-icon"><i data-lucide="shield-alert"></i></div>
+          <div class="drawer-item-details">
+            <span class="drawer-item-title">Report</span>
+            <span class="drawer-item-subtitle">Report this user</span>
+          </div>
+        </div>
+        <div class="drawer-menu-item" id="drawer-action-block">
+          <div class="drawer-item-icon danger-icon"><i data-lucide="ban"></i></div>
+          <div class="drawer-item-details">
+            <span class="drawer-item-title">Block</span>
+            <span class="drawer-item-subtitle">Block this user</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================================
+       DRAWER 2: ATTACHMENT SELECTION DRAWER
+       ============================================== -->
+  <div class="drawer-overlay" id="attachment-drawer">
+    <div class="drawer-panel glass-card">
+      <div class="drawer-header">
+        <h3>Share content</h3>
+        <button class="close-drawer-btn" id="close-attachment-drawer"><i data-lucide="x"></i></button>
+      </div>
+      <div class="attachment-grid">
+        <label class="attachment-item" id="attach-photo-btn">
+          <input type="file" id="attach-photo-input" accept="image/*" class="hidden-input">
+          <div class="attachment-icon-wrapper photo-bg"><i data-lucide="image"></i></div>
+          <span>Photo</span>
+        </label>
+        <button class="attachment-item" id="attach-camera-btn">
+          <div class="attachment-icon-wrapper camera-bg"><i data-lucide="camera"></i></div>
+          <span>Camera</span>
+        </button>
+        <button class="attachment-item" id="attach-gallery-btn">
+          <div class="attachment-icon-wrapper gallery-bg"><i data-lucide="film"></i></div>
+          <span>Gallery</span>
+        </button>
+        <label class="attachment-item" id="attach-file-btn">
+          <input type="file" id="attach-file-input" class="hidden-input">
+          <div class="attachment-icon-wrapper file-bg"><i data-lucide="file-text"></i></div>
+          <span>File</span>
+        </label>
+        <button class="attachment-item" id="attach-voice-btn">
+          <div class="attachment-icon-wrapper voice-bg"><i data-lucide="mic"></i></div>
+          <span>Voice</span>
+        </button>
+        <button class="attachment-item" id="attach-location-btn">
+          <div class="attachment-icon-wrapper location-bg"><i data-lucide="map-pin"></i></div>
+          <span>Location</span>
+        </button>
+        <button class="attachment-item" id="attach-contact-btn">
+          <div class="attachment-icon-wrapper contact-bg"><i data-lucide="user"></i></div>
+          <span>Contact</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================================
+       DRAWER 3: VOICE NOTE RECORDING FLOATING PANEL
+       ============================================== -->
+  <div class="drawer-overlay" id="voice-recorder-overlay">
+    <div class="drawer-panel glass-card voice-recorder-panel-content">
+      <div class="recorder-meta">
+        <span class="record-badge animate-pulse"></span>
+        <span id="recording-timer">0:00</span>
+      </div>
+      <!-- Waveform canvas -->
+      <div class="waveform-container">
+        <canvas id="waveform-canvas"></canvas>
+      </div>
+      <div class="voice-actions-row">
+        <div class="slide-cancel-area">
+          <i data-lucide="chevron-left" class="arrow-swipe"></i>
+          <span>Slide to cancel</span>
+        </div>
+        <button id="cancel-voice-btn" class="circle-btn cancel-btn"><i data-lucide="trash-2"></i></button>
+        <button id="stop-send-voice-btn" class="circle-btn record-mic-active"><i data-lucide="mic"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================================
+       MODAL 1: RAZORPAY SUBSCRIPTION GATEWAY
+       ============================================== -->
+  <div class="modal-overlay" id="razorpay-modal">
+    <div class="modal-card glass-card razorpay-payment-card">
+      <div class="razorpay-modal-header">
+        <div class="razorpay-logo">
+          <span class="rzp-blue">Razorpay</span>
+        </div>
+        <button class="close-modal-btn" id="close-payment-modal"><i data-lucide="x"></i></button>
+      </div>
+      <div class="merchant-info">
+        <div class="merchant-details">
+          <h4>MeloChat Premium</h4>
+          <span class="merchant-name">by Antigravity Socials</span>
+        </div>
+        <div class="price-bubble">
+          <span>₹499.00</span>
+        </div>
+      </div>
+
+      <div class="payment-tabs">
+        <div class="payment-tab-item active" data-paymethod="card">Card</div>
+        <div class="payment-tab-item" data-paymethod="upi">UPI</div>
+        <div class="payment-tab-item" data-paymethod="netbanking">Netbanking</div>
+      </div>
+
+      <div class="payment-fields-viewport">
+        <!-- Card Method Fields -->
+        <div class="payment-method-fields active" id="pay-fields-card">
+          <div class="form-group">
+            <label>Card Number</label>
+            <input type="text" id="rzp-card-num" placeholder="4312 8900 1200 4567" value="4312 8900 1200 4567">
+          </div>
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label>Expiry</label>
+              <input type="text" id="rzp-card-expiry" placeholder="MM/YY" value="12/29">
+            </div>
+            <div class="form-group">
+              <label>CVV</label>
+              <input type="password" id="rzp-card-cvv" placeholder="123" value="•••">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Card Holder Name</label>
+            <input type="text" id="rzp-card-name" placeholder="Melo User" value="Melo User">
+          </div>
+        </div>
+
+        <!-- UPI Method Fields -->
+        <div class="payment-method-fields" id="pay-fields-upi">
+          <div class="form-group">
+            <label>Enter UPI ID / VPA</label>
+            <input type="text" id="rzp-upi-id" placeholder="melo@paytm">
+          </div>
+          <p class="upi-help-text">A payment request will be sent to your UPI App.</p>
+        </div>
+
+        <!-- Netbanking Method Fields -->
+        <div class="payment-method-fields" id="pay-fields-netbanking">
+          <label>Popular Banks</label>
+          <div class="banks-grid">
+            <button class="bank-select-btn">SBI</button>
+            <button class="bank-select-btn">HDFC</button>
+            <button class="bank-select-btn">ICICI</button>
+            <button class="bank-select-btn">Axis</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Summary & CTA -->
+      <div class="payment-footer">
+        <button id="pay-now-btn" class="payment-submit-btn">
+          <span>Pay ₹499.00</span>
+        </button>
+        <span class="rzp-secure-badge"><i data-lucide="shield-check"></i> Secured by Razorpay</span>
+      </div>
+
+      <!-- Payment Loader Overlay -->
+      <div class="payment-loader-overlay hidden" id="payment-loader">
+        <div class="loader-spinner"></div>
+        <h4 id="payment-loader-status">Processing Payment...</h4>
+        <p>Please do not press back or close this window.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================================
+       MODAL 2: EDIT PROFILE COMPLETE DETAILS
+       ============================================== -->
+  <div class="modal-overlay" id="profile-edit-modal">
+    <div class="modal-card glass-card" style="max-height: 90vh; overflow-y: auto;">
+      <div class="modal-header">
+        <h3>Edit Profile Details</h3>
+        <button class="close-modal-btn" id="close-profile-edit-modal"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Update Profile Photo</label>
+          <label class="glass-btn fill-width" style="padding: 8px 12px; font-size: 12px; cursor: pointer;">
+            <input type="file" id="edit-profile-avatar-file" accept="image/*" class="hidden-input">
+            <i data-lucide="upload-cloud" style="width: 14px; height: 14px; margin-right: 6px;"></i>
+            <span>Upload New Photo</span>
+          </label>
+        </div>
+        <div class="form-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 0;">
+          <div class="form-group">
+            <label for="edit-profile-name">Full Name</label>
+            <input type="text" id="edit-profile-name" value="MeloUser">
+          </div>
+          <div class="form-group">
+            <label for="edit-profile-username">Username</label>
+            <input type="text" id="edit-profile-username" value="melo_stranger">
+          </div>
+          <div class="form-group">
+            <label for="edit-profile-gender">Gender</label>
+            <select id="edit-profile-gender">
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="edit-profile-age">Age</label>
+            <input type="number" id="edit-profile-age" min="18" max="100" value="21">
+          </div>
+          <div class="form-group" style="grid-column: span 2;">
+            <label for="edit-profile-interested-in">Interested In</label>
+            <select id="edit-profile-interested-in">
+              <option value="Women">Women</option>
+              <option value="Men">Men</option>
+              <option value="Everyone">Everyone</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="edit-profile-bio">Bio</label>
+          <textarea id="edit-profile-bio" rows="2">Tell strangers something interesting about you...</textarea>
+        </div>
+        <div class="form-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 0;">
+          <div class="form-group">
+            <label for="edit-profile-country">Country</label>
+            <select id="edit-profile-country"></select>
+          </div>
+          <div class="form-group">
+            <label for="edit-profile-state">State / Region</label>
+            <select id="edit-profile-state"></select>
+          </div>
+          <div class="form-group" style="grid-column: span 2;">
+            <label for="edit-profile-district">District / City</label>
+            <select id="edit-profile-district"></select>
+          </div>
+        </div>
+        <button id="save-profile-details-btn" class="gradient-btn fill-width glow-btn">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================================
+       MODAL 3: LOCATION SELECTOR MODAL & LEAFLET MAP
+       ============================================== -->
+  <div class="modal-overlay" id="location-picker-modal">
+    <div class="modal-card glass-card">
+      <div class="modal-header">
+        <h3>Change Neighbourhood</h3>
+        <button class="close-modal-btn" id="close-location-picker-modal"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 0;">
+          <div class="form-group">
+            <label for="loc-picker-country">Country</label>
+            <select id="loc-picker-country"></select>
+          </div>
+          <div class="form-group">
+            <label for="loc-picker-state">State</label>
+            <select id="loc-picker-state"></select>
+          </div>
+          <div class="form-group" style="grid-column: span 2;">
+            <label for="loc-picker-district">District / City</label>
+            <select id="loc-picker-district"></select>
+          </div>
+        </div>
+
+        <!-- Leaflet Map Container -->
+        <div class="form-group">
+          <label>Set Map Location Coordinate</label>
+          <div id="map-canvas" style="height: 180px; width: 100%; border-radius: 12px; border: 1px solid var(--border-glass); z-index: 1;"></div>
+        </div>
+
+        <!-- 100km radius filter toggle switch -->
+        <div class="switch-item-row" style="background: rgba(255, 255, 255, 0.02); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border-glass);">
+          <div class="switch-text">
+            <span class="switch-title" style="font-size: 12.5px;">Match within 100 km</span>
+            <span class="switch-subtitle" style="font-size: 10px;">Only match strangers close to you</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="loc-picker-limit-distance" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <button id="save-location-picker-btn" class="gradient-btn fill-width glow-btn">Confirm Location</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Emoji Picker Popup Container (Absolute positioned near chat input) -->
+  <div class="emoji-picker-popup hidden" id="emoji-picker-popup">
+    <div class="emoji-grid">
+      <span>😊</span><span>😂</span><span>😍</span><span>😉</span><span>😘</span><span>🔥</span><span>💖</span><span>👍</span>
+      <span>👋</span><span>🎉</span><span>🎂</span><span>🌈</span><span>🍕</span><span>🐱</span><span>🚀</span><span>✈️</span>
+      <span>😎</span><span>🤔</span><span>😢</span><span>😱</span><span>😴</span><span>😈</span><span>💯</span><span>🍿</span>
+    </div>
+  </div>
+
+  <!-- Toast Notification Hub -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Razorpay Checkout SDK -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <!-- Main Application Logic Script -->
+  <script src="app.js"></script>
+</body>
+</html>
